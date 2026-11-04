@@ -74,6 +74,21 @@
     };
   }
 
+  /*
+   * Day rollover helpers.
+   * needsRollover: true when the persisted day is a previous day.
+   * shouldPlantOnRollover: true when yesterday's plant bloomed but was
+   * never transplanted (page closed before the animation) — plant it anyway.
+   */
+  function needsRollover(savedDay, currentDay) {
+    return typeof savedDay === "string" && typeof currentDay === "string" && savedDay !== currentDay;
+  }
+
+  function shouldPlantOnRollover(saved) {
+    if (!saved || saved.transplanted) return false;
+    return saved.plantStatus === "bloomed";
+  }
+
   var api = {
     STAGES: STAGES,
     STAGE_SCALES: STAGE_SCALES,
@@ -84,6 +99,8 @@
     healthStatus: healthStatus,
     clamp: clamp,
     normalizeSettings: normalizeSettings,
+    needsRollover: needsRollover,
+    shouldPlantOnRollover: shouldPlantOnRollover,
   };
 
   if (typeof module !== "undefined" && module.exports) {

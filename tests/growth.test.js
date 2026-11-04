@@ -156,3 +156,20 @@ test("a neglected plant decays from healthy to sick to dead", () => {
   assert.strictEqual(sinceLastGlass(269), "sick");
   assert.strictEqual(sinceLastGlass(270), "dead");
 });
+
+/* ---------- day rollover ---------- */
+
+test("needsRollover is true only across different days", () => {
+  assert.strictEqual(Growth.needsRollover("2025-11-04", "2025-11-04"), false);
+  assert.strictEqual(Growth.needsRollover("2025-11-04", "2025-11-05"), true);
+  assert.strictEqual(Growth.needsRollover(undefined, "2025-11-05"), false);
+  assert.strictEqual(Growth.needsRollover("2025-11-04", undefined), false);
+});
+
+test("shouldPlantOnRollover only for un-transplanted blooms", () => {
+  assert.strictEqual(Growth.shouldPlantOnRollover({ plantStatus: "bloomed", transplanted: false }), true);
+  assert.strictEqual(Growth.shouldPlantOnRollover({ plantStatus: "bloomed", transplanted: true }), false);
+  assert.strictEqual(Growth.shouldPlantOnRollover({ plantStatus: "dead" }), false);
+  assert.strictEqual(Growth.shouldPlantOnRollover({ plantStatus: "large" }), false);
+  assert.strictEqual(Growth.shouldPlantOnRollover(null), false);
+});

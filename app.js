@@ -79,12 +79,18 @@ function loadState() {
     const saved = JSON.parse(raw);
     settings = { ...DEFAULTS, ...(saved.settings || {}) };
     speciesId = saved.speciesId && Plants.speciesFor(saved.speciesId) ? saved.speciesId : speciesId;
-    if (saved.day === dayKey) {
+    if (Growth.needsRollover(saved.day, dayKey)) {
+      // New day since the last visit: pot a fresh, random species and reset the day.
+      if (Growth.shouldPlantOnRollover(saved)) {
+        plantInGarden(saved.bloomColor);
+      }
+      speciesId = Plants.randomSpecies();
+      logs = [];
+      plantStatus = "seed";
+      persist();
+    } else if (saved.day === dayKey) {
       logs = saved.logs || [];
       plantStatus = saved.plantStatus || plantStatus;
-    } else if (saved.day && saved.plantStatus === "bloomed" && !saved.transplanted) {
-      // Bloomed yesterday but never transplanted (page closed early): plant it anyway.
-      plantInGarden(saved.bloomColor);
     }
   } catch (e) {
     console.warn("Could not load state", e);
