@@ -2,6 +2,7 @@
 
 /* ---------- constants & storage ---------- */
 const STORAGE_KEY = "hydra-state-v1";
+const GARDEN_KEY = "hydra-garden";
 const DEFAULTS = {
   goalLiters: 2.0,
   glassMl: 250,
@@ -9,11 +10,20 @@ const DEFAULTS = {
   notifications: false,
 };
 
+/* Free spots on the garden hill, occupied in order. */
+const SLOTS = [
+  { left: 6, bottom: 2 }, { left: 16, bottom: 10 }, { left: 27, bottom: 4 },
+  { left: 38, bottom: 12 }, { left: 49, bottom: 3 }, { left: 60, bottom: 11 },
+  { left: 71, bottom: 4 }, { left: 82, bottom: 13 }, { left: 90, bottom: 5 },
+  { left: 12, bottom: 18 }, { left: 44, bottom: 19 }, { left: 76, bottom: 20 },
+];
+
 const $ = (sel) => document.querySelector(sel);
 
 const els = {
+  plant: $("#plant"),
   plantBody: $("#plant-body"),
-  flower: $("#flower"),
+  plantInner: $("#plant-inner"),
   droplet: $("#droplet"),
   speech: $("#speech-bubble"),
   progressFill: $("#progress-fill"),
@@ -36,9 +46,10 @@ const els = {
 
 /* ---------- state ---------- */
 let settings = { ...DEFAULTS };
-let logs = [];        // [{ at: timestamp, ml }]
+let logs = [];          // [{ at: timestamp, ml }]
 let dayKey = todayKey();
-let plantStatus = "seed"; // seed | sprout | small | medium | large | sick | dead | bloomed
+let speciesId = Plants.SPECIES[0].id;
+let plantStatus = "seed"; // seed | sprout | small | medium | large | sick | dead | bloomed | transplanted
 let reminderTimer = null;
 let statusTimer = null;
 let toastTimer = null;
@@ -47,20 +58,33 @@ function todayKey(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+function loadGarden() {
+  try {
+    return JSON.parse(localStorage.getItem(GARDEN_KEY) || "[]");
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveGarden(entries) {
+  try {
+    localStorage.setItem(GARDEN_KEY, JSON.stringify(entries));
+  } catch (e) { /* ignore */ }
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     const saved = JSON.parse(raw);
     settings = { ...DEFAULTS, ...(saved.settings || {}) };
+    speciesId = saved.speciesId && Plants.speciesFor(saved.speciesId) ? saved.speciesId : speciesId;
     if (saved.day === dayKey) {
       logs = saved.logs || [];
-    } else if (saved.plantStatus === "bloomed") {
-      addGardenFlower(saved.bloomedAt || Date.now(), saved.flowerColor || "#ff8fb1");
-      persist();
-      return;
-    } else if (saved.day && saved.logs && saved.logs.length > 0) {
-      addGardenFlower(saved.bloomedAt || Date.now(), saved.flowerColor || "#ff8fb1");
+      plantStatus = saved.plantStatus || plantStatus;
+    } else if (saved.day && saved.plantStatus === "bloomed" && !saved.transplanted) {
+      // Bloomed yesterday but never transplanted (page closed early): plant it anyway.
+      plantInGarden(saved.bloomColor);
     }
   } catch (e) {
     console.warn("Could not load state", e);
@@ -73,7 +97,9 @@ function persist() {
     settings,
     logs,
     plantStatus,
-    bloomColor: flowerColor,
+    speciesId,
+    transplanted: plantStatus === "transplanted",
+    bloomColor: Plants.speciesFor(speciesId).color,
   };
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -93,12 +119,15 @@ function stageForProgress() {
 /* ---------- plant rendering ---------- */
 function renderPlant() {
   const body = els.plantBody;
+  els.plantInner.innerHTML = Plants.markupFor(speciesId);
   body.classList.remove("stage-seed", "stage-sprout", "stage-small", "stage-medium", "stage-large", "sick", "dead", "bloomed", "healthy");
 
   if (plantStatus === "dead") {
     body.classList.add("dead");
   } else if (plantStatus === "bloomed") {
     body.classList.add("stage-large", "bloomed");
+  } else if (plantStatus === "transplanted") {
+    body.classList.add("stage-seed");
   } else if (plantStatus === "sick") {
     body.classList.add(Growth.stageClass(stageForProgress()), "sick");
   } else {
@@ -137,55 +166,91 @@ function renderProgress() {
 }
 
 /* ---------- garden (bloomed plants history) ---------- */
-const FLOWER_COLORS = ["#ff8fb1", "#ffd166", "#c77dff", "#ff6b6b", "#7bdff2", "#f4a261"];
-let flowerColor = FLOWER_COLORS[0];
+function freeSlot() {
+  const entries = loadGarden();
+  const used = new Set(entries.map((e) => e.slot));
+  for (let i = 0; i < SLOTS.length; i++) {
+    if (!used.has(i)) return i;
+  }
+  return entries.length % SLOTS.length; // garden full: recycle oldest spot
+}
 
-function addGardenFlower(at, color) {
-  const gardenFlowers = JSON.parse(localStorage.getItem("hydra-garden") || "[]");
-  gardenFlowers.push({ at, color });
-  localStorage.setItem("hydra-garden", JSON.stringify(gardenFlowers));
+function plantInGarden(color) {
+  const entries = loadGarden();
+  const slot = freeSlot();
+  entries.push({ at: Date.now(), color: color || Plants.speciesFor(speciesId).color, species: speciesId, slot });
+  saveGarden(entries.slice(-SLOTS.length * 2));
   renderGarden();
+  return slot;
 }
 
 function renderGarden() {
-  let gardenFlowers = [];
-  try {
-    gardenFlowers = JSON.parse(localStorage.getItem("hydra-garden") || "[]");
-  } catch (e) { /* ignore */ }
+  const entries = loadGarden();
   els.garden.innerHTML = "";
-  const count = Math.min(gardenFlowers.length, 24);
+  const count = Math.min(entries.length, SLOTS.length);
+  const start = entries.length - count;
   for (let i = 0; i < count; i++) {
-    const f = gardenFlowers[gardenFlowers.length - 1 - i];
-    const el = buildGardenFlower(f.color, i);
-    els.garden.appendChild(el);
+    const e = entries[start + i];
+    const slot = SLOTS[e.slot % SLOTS.length];
+    const wrap = document.createElement("div");
+    wrap.className = "garden-flower";
+    wrap.dataset.slot = e.slot;
+    wrap.style.left = slot.left + "%";
+    wrap.style.bottom = slot.bottom + "%";
+    wrap.style.animationDelay = (e.slot % 5) * 0.4 + "s";
+    wrap.innerHTML = Plants.svgFor(e.species, 74);
+    els.garden.appendChild(wrap);
   }
 }
 
-function buildGardenFlower(color, index) {
-  const wrap = document.createElement("div");
-  wrap.className = "garden-flower";
-  const left = (index * 37 + 12) % 92 + 2;
-  const delay = (index % 5) * 0.4;
-  const size = 26 + (index % 3) * 8;
-  wrap.style.left = left + "%";
-  wrap.style.animationDelay = delay + "s";
-  wrap.style.width = size + "px";
-  wrap.innerHTML = `
-    <svg viewBox="0 0 40 60" width="100%">
-      <path d="M20 60 C20 45 19 35 20 24" stroke="#3f8f4f" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <path d="M20 44 C11 43 6 37 4 30 C13 28 19 34 20 44 Z" fill="#4caf50"/>
-      <path d="M20 34 C29 33 34 27 36 20 C27 18 21 24 20 34 Z" fill="#58c15c"/>
-      <g>
-        <ellipse cx="20" cy="14" rx="5" ry="9" fill="${color}"/>
-        <ellipse cx="20" cy="14" rx="5" ry="9" fill="${color}" transform="rotate(60 20 20)"/>
-        <ellipse cx="20" cy="14" rx="5" ry="9" fill="${color}" transform="rotate(120 20 20)"/>
-        <ellipse cx="20" cy="14" rx="5" ry="9" fill="${color}" transform="rotate(180 20 20)"/>
-        <ellipse cx="20" cy="14" rx="5" ry="9" fill="${color}" transform="rotate(240 20 20)"/>
-        <ellipse cx="20" cy="14" rx="5" ry="9" fill="${color}" transform="rotate(300 20 20)"/>
-        <circle cx="20" cy="20" r="5" fill="#ffd166"/>
-      </g>
-    </svg>`;
-  return wrap;
+/* ---------- transplant animation ---------- */
+function transplantBloom() {
+  if (plantStatus !== "bloomed") return;
+  const slot = plantInGarden();
+
+  const targetEl = els.garden.querySelector(`[data-slot="${slot}"]`);
+  if (!targetEl || typeof targetEl.getBoundingClientRect !== "function") {
+    finishTransplant();
+    return;
+  }
+  targetEl.style.visibility = "hidden";
+
+  const plantRect = els.plant.getBoundingClientRect();
+  const clone = document.createElement("div");
+  clone.className = "transplant-clone";
+  clone.innerHTML = Plants.svgFor(speciesId, Math.min(200, plantRect.width));
+  document.body.appendChild(clone);
+
+  const size = clone.firstElementChild.getBoundingClientRect();
+  const startX = plantRect.left + plantRect.width / 2 - size.width / 2;
+  const startY = plantRect.top;
+  clone.style.left = startX + "px";
+  clone.style.top = startY + "px";
+
+  const t = targetEl.getBoundingClientRect();
+  const targetX = t.left + t.width / 2 - size.width / 2;
+  const targetY = t.bottom - size.height;
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      clone.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.42)`;
+      clone.style.opacity = "0.9";
+    });
+  });
+
+  setTimeout(() => {
+    clone.remove();
+    targetEl.style.visibility = "";
+    finishTransplant();
+  }, 1400);
+}
+
+function finishTransplant() {
+  plantStatus = "transplanted";
+  renderPlant();
+  persist();
+  say("I'm home in the garden now. Thank you! 🌸");
+  toast("Your plant has been transplanted to the garden 🌱");
 }
 
 /* ---------- stars (ambient) ---------- */
@@ -205,17 +270,23 @@ function renderStars() {
 
 /* ---------- core actions ---------- */
 function drinkGlass() {
-  if (plantStatus === "dead" || plantStatus === "bloomed") {
-    toast(plantStatus === "bloomed" ? "Goal reached! Your plant is blooming 🌸" : "Your plant has withered for today. It'll be back tomorrow 🌱");
+  if (plantStatus === "dead") {
+    toast("Your plant has withered for today. It'll be back tomorrow 🌱");
     return;
   }
 
   logs.push({ at: Date.now(), ml: settings.glassMl });
-  plantStatus = stageForProgress();
   animateDroplet();
-  renderPlant();
   renderProgress();
   persist();
+
+  if (plantStatus === "bloomed" || plantStatus === "transplanted") {
+    say("Extra water for the garden! Thank you 💧");
+    return;
+  }
+
+  plantStatus = stageForProgress();
+  renderPlant();
   scheduleReminder();
   scheduleStatusCheck();
 
@@ -248,7 +319,6 @@ function animateDroplet() {
 
 function bloom() {
   plantStatus = "bloomed";
-  flowerColor = FLOWER_COLORS[Math.floor(Math.random() * FLOWER_COLORS.length)];
   renderPlant();
   persist();
   say("We did it! I'm blooming! 🌸");
@@ -258,17 +328,16 @@ function bloom() {
       new Notification("Hydra", { body: "Your plant bloomed! Beautiful job staying hydrated today 🌸" });
     } catch (e) { /* ignore */ }
   }
-  els.drinkBtn.disabled = true;
-  setTimeout(() => (els.drinkBtn.disabled = false), 800);
+  setTimeout(transplantBloom, 2400);
 }
 
 /* ---------- reminders & health ---------- */
 function scheduleReminder() {
   clearTimeout(reminderTimer);
-  if (plantStatus === "dead" || plantStatus === "bloomed") return;
+  if (plantStatus === "dead" || plantStatus === "bloomed" || plantStatus === "transplanted") return;
   const ms = settings.reminderMinutes * 60 * 1000;
   reminderTimer = setTimeout(() => {
-    if (plantStatus === "dead" || plantStatus === "bloomed") return;
+    if (plantStatus === "dead" || plantStatus === "bloomed" || plantStatus === "transplanted") return;
     say("I'm thirsty… could you drink some water? 💧");
     toast("Time for a glass of water! Your companion is thirsty 💧");
     if (settings.notifications && Notification.permission === "granted") {
@@ -281,13 +350,13 @@ function scheduleReminder() {
 
 function scheduleStatusCheck() {
   clearTimeout(statusTimer);
-  if (plantStatus === "dead" || plantStatus === "bloomed") return;
+  if (plantStatus === "dead" || plantStatus === "bloomed" || plantStatus === "transplanted") return;
   const ms = settings.reminderMinutes * 60 * 1000 * 1.5;
   statusTimer = setTimeout(checkHealth, ms);
 }
 
 function checkHealth() {
-  if (plantStatus === "dead" || plantStatus === "bloomed") return;
+  if (plantStatus === "dead" || plantStatus === "bloomed" || plantStatus === "transplanted") return;
   const last = logs.length ? logs[logs.length - 1].at : dayStart();
   const status = Growth.healthStatus(Date.now() - last, settings.reminderMinutes * 60 * 1000);
 
@@ -335,8 +404,10 @@ function closeSettings() {
 
   els.settingsModal.hidden = true;
   persist();
-  plantStatus = plantStatus === "bloomed" || plantStatus === "dead" ? plantStatus : stageForProgress();
-  renderPlant();
+  if (plantStatus !== "bloomed" && plantStatus !== "transplanted" && plantStatus !== "dead") {
+    plantStatus = stageForProgress();
+    renderPlant();
+  }
   renderProgress();
   scheduleReminder();
   scheduleStatusCheck();
@@ -344,19 +415,32 @@ function closeSettings() {
 }
 
 /* ---------- day rollover ---------- */
+function potNewSeed() {
+  speciesId = Plants.randomSpecies();
+  logs = [];
+  plantStatus = "seed";
+  renderPlant();
+  renderProgress();
+  persist();
+  const species = Plants.speciesFor(speciesId);
+  say(`Good morning! Today's seed is a ${species.name} 🌱`);
+}
+
 function checkNewDay() {
   const now = new Date();
   if (todayKey(now) !== dayKey) {
-    if (plantStatus === "bloomed") {
-      addGardenFlower(Date.now(), flowerColor);
+    if (plantStatus === "bloomed" && !document.hidden) {
+      // Bloomed and still on screen: transplant before rolling over.
+      transplantBloom();
+      dayKey = todayKey(now);
+      setTimeout(potNewSeed, 1600);
+      return;
+    }
+    if (plantStatus === "bloomed" || plantStatus === "transplanted") {
+      plantInGarden();
     }
     dayKey = todayKey(now);
-    logs = [];
-    plantStatus = "seed";
-    persist();
-    renderPlant();
-    renderProgress();
-    say("A new seed has been potted! Good morning 🌱");
+    potNewSeed();
   }
 }
 
@@ -365,7 +449,7 @@ function init() {
   loadState();
   renderStars();
   renderGarden();
-  plantStatus = logs.length ? stageForProgress() : "seed";
+  if (!logs.length) plantStatus = "seed";
   renderPlant();
   renderProgress();
 
@@ -386,7 +470,8 @@ function init() {
     }
   });
 
-  say(logs.length ? "Welcome back! I missed you 💧" : "Good morning! I'm your little seed 🌱");
+  const species = Plants.speciesFor(speciesId);
+  say(logs.length ? `Welcome back to your ${species.name}! 💧` : `Good morning! Today's seed is a ${species.name} 🌱`);
   scheduleReminder();
   scheduleStatusCheck();
   setInterval(checkNewDay, 60 * 1000);
