@@ -82,21 +82,13 @@ function persist() {
   }
 }
 
-/* ---------- water math ---------- */
-const mlTotal = () => logs.reduce((sum, l) => sum + l.ml, 0);
+/* ---------- water math (pure logic lives in growth.js) ---------- */
+const mlTotal = () => Growth.totalMl(logs);
 const litersTotal = () => mlTotal() / 1000;
 
 function stageForProgress() {
-  const goalMl = settings.goalLiters * 1000;
-  const ratio = goalMl > 0 ? mlTotal() / goalMl : 0;
-  if (ratio <= 0) return "seed";
-  if (ratio < 0.25) return "sprout";
-  if (ratio < 0.5) return "small";
-  if (ratio < 0.8) return "medium";
-  return "large";
+  return Growth.stageForProgress(mlTotal(), settings.goalLiters);
 }
-
-const STAGE_SCALES = { seed: 0.12, sprout: 0.35, small: 0.55, medium: 0.78, large: 1 };
 
 /* ---------- plant rendering ---------- */
 function renderPlant() {
@@ -105,24 +97,13 @@ function renderPlant() {
 
   if (plantStatus === "dead") {
     body.classList.add("dead");
-    body.style.setProperty("--stage-scale", STAGE_SCALES[lastStage()] || 1);
   } else if (plantStatus === "bloomed") {
     body.classList.add("stage-large", "bloomed");
-    body.style.setProperty("--stage-scale", 1);
   } else if (plantStatus === "sick") {
-    body.classList.add(stageClass(lastStage()), "sick");
-    body.style.setProperty("--stage-scale", STAGE_SCALES[stageForProgress()] || 1);
+    body.classList.add(Growth.stageClass(stageForProgress()), "sick");
   } else {
-    body.classList.add(stageClass(plantStatus), "healthy");
+    body.classList.add(Growth.stageClass(plantStatus), "healthy");
   }
-}
-
-function stageClass(stage) {
-  return "stage-" + (stage === "seed" ? "seed" : stage);
-}
-
-function lastStage() {
-  return stageForProgress();
 }
 
 function say(text) {
@@ -238,8 +219,7 @@ function drinkGlass() {
   scheduleReminder();
   scheduleStatusCheck();
 
-  const goalMl = settings.goalLiters * 1000;
-  if (mlTotal() >= goalMl) {
+  if (Growth.reachedGoal(mlTotal(), settings.goalLiters)) {
     bloom();
   } else {
     const messages = {
@@ -309,11 +289,9 @@ function scheduleStatusCheck() {
 function checkHealth() {
   if (plantStatus === "dead" || plantStatus === "bloomed") return;
   const last = logs.length ? logs[logs.length - 1].at : dayStart();
-  const elapsed = Date.now() - last;
-  const sickAfter = settings.reminderMinutes * 60 * 1000 * 1.5;
-  const deadAfter = sickAfter * 2;
+  const status = Growth.healthStatus(Date.now() - last, settings.reminderMinutes * 60 * 1000);
 
-  if (elapsed >= deadAfter) {
+  if (status === "dead") {
     plantStatus = "dead";
     renderPlant();
     persist();
@@ -322,7 +300,7 @@ function checkHealth() {
     return;
   }
 
-  if (elapsed >= sickAfter && plantStatus !== "sick") {
+  if (status === "sick" && plantStatus !== "sick") {
     plantStatus = "sick";
     renderPlant();
     persist();
@@ -348,14 +326,12 @@ function openSettings() {
 }
 
 function closeSettings() {
-  const goal = parseFloat(els.goalInput.value);
-  const glass = parseInt(els.glassInput.value, 10);
-  const reminder = parseInt(els.reminderInput.value, 10);
-
-  if (!isNaN(goal)) settings.goalLiters = Math.min(5, Math.max(0.5, goal));
-  if (!isNaN(glass)) settings.glassMl = Math.min(500, Math.max(100, glass));
-  if (!isNaN(reminder)) settings.reminderMinutes = Math.min(240, Math.max(15, reminder));
-  settings.notifications = els.notifToggle.checked;
+  settings = Growth.normalizeSettings({
+    goalLiters: els.goalInput.value,
+    glassMl: els.glassInput.value,
+    reminderMinutes: els.reminderInput.value,
+    notifications: els.notifToggle.checked,
+  }, settings);
 
   els.settingsModal.hidden = true;
   persist();

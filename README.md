@@ -17,3 +17,10 @@ Open `index.html` in a mobile browser, or serve the folder:
 ```bash
 npx serve .
 ```
+
+## Tests
+Growth logic lives in `growth.js` (pure functions, no DOM) and is covered by a unit suite using Node's built-in test runner — no dependencies needed:
+
+```bash
+node --test tests/growth.test.js
+```

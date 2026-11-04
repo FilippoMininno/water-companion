@@ -39,6 +39,7 @@
           </g>
           <!-- plant body: scaled/animated via CSS -->
           <g id="plant-body" transform-origin="100 190">
+           <g id="plant-inner">
             <path id="stem" d="M100 190 C100 150 98 120 100 92" stroke="#3f8f4f" stroke-width="8" fill="none" stroke-linecap="round"/>
             <path id="leaf-l" d="M100 150 C78 148 66 136 62 118 C82 114 98 126 100 150 Z" fill="#4caf50"/>
             <path id="leaf-r" d="M100 128 C122 126 134 114 138 96 C118 92 102 104 100 128 Z" fill="#58c15c"/>
@@ -59,6 +60,7 @@
               <path d="M92 168 q4 -5 8 0" stroke="#2e5d36" stroke-width="2" fill="none" stroke-linecap="round"/>
               <path d="M112 152 q4 -5 8 0" stroke="#2e5d36" stroke-width="2" fill="none" stroke-linecap="round"/>
             </g>
+           </g>
           </g>
         </svg>
         <div id="speech-bubble" aria-live="polite">Good morning! I'm your little seed 🌱</div>
@@ -108,6 +110,7 @@
 
   <div id="toast" aria-live="polite"></div>
 
+  <script src="growth.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
