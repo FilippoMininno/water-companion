@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#8ecae6" />
+  <title>Hydra — your water companion</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="sky">
+    <div id="garden"></div>
+    <div id="stars"></div>
+  </div>
+
+  <main id="app">
+    <header>
+      <h1>Hydra</h1>
+      <button id="settings-btn" aria-label="Settings">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </header>
+
+    <section id="plant-stage" aria-label="Your plant">
+      <div id="plant-wrap">
+        <svg id="plant" viewBox="0 0 200 260" role="img" aria-label="Your companion plant">
+          <!-- pot -->
+          <g id="pot">
+            <path id="pot-body" d="M55 190 L145 190 L133 250 Q132 258 124 258 L76 258 Q68 258 67 250 Z" fill="#c1682f"/>
+            <path id="pot-rim" d="M50 178 L150 178 L150 196 L50 196 Z" fill="#d97b41"/>
+            <ellipse id="soil" cx="100" cy="190" rx="46" ry="8" fill="#5b3a29"/>
+          </g>
+          <!-- water droplet shown while watering -->
+          <g id="droplet" opacity="0">
+            <path d="M100 40 C92 55 84 66 84 76 a16 16 0 0 0 32 0 C116 66 108 55 100 40 Z" fill="#63c7f2"/>
+          </g>
+          <!-- plant body: scaled/animated via CSS -->
+          <g id="plant-body" transform-origin="100 190">
+            <path id="stem" d="M100 190 C100 150 98 120 100 92" stroke="#3f8f4f" stroke-width="8" fill="none" stroke-linecap="round"/>
+            <path id="leaf-l" d="M100 150 C78 148 66 136 62 118 C82 114 98 126 100 150 Z" fill="#4caf50"/>
+            <path id="leaf-r" d="M100 128 C122 126 134 114 138 96 C118 92 102 104 100 128 Z" fill="#58c15c"/>
+            <path id="leaf-l2" d="M100 108 C84 100 78 88 78 74 C94 76 102 90 100 108 Z" fill="#4caf50"/>
+            <g id="flower" opacity="0">
+              <g id="petals">
+                <ellipse class="petal p1" cx="100" cy="62" rx="9" ry="16" fill="#ff8fb1"/>
+                <ellipse class="petal p2" cx="100" cy="62" rx="9" ry="16" fill="#ff8fb1" transform="rotate(60 100 78)"/>
+                <ellipse class="petal p3" cx="100" cy="62" rx="9" ry="16" fill="#ff8fb1" transform="rotate(120 100 78)"/>
+                <ellipse class="petal p4" cx="100" cy="62" rx="9" ry="16" fill="#ff8fb1" transform="rotate(180 100 78)"/>
+                <ellipse class="petal p5" cx="100" cy="62" rx="9" ry="16" fill="#ff8fb1" transform="rotate(240 100 78)"/>
+                <ellipse class="petal p6" cx="100" cy="62" rx="9" ry="16" fill="#ff8fb1" transform="rotate(300 100 78)"/>
+              </g>
+              <circle id="flower-core" cx="100" cy="78" r="9" fill="#ffd166"/>
+            </g>
+            <!-- sick face marks -->
+            <g id="sick-marks" opacity="0">
+              <path d="M92 168 q4 -5 8 0" stroke="#2e5d36" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M112 152 q4 -5 8 0" stroke="#2e5d36" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </g>
+          </g>
+        </svg>
+        <div id="speech-bubble" aria-live="polite">Good morning! I'm your little seed 🌱</div>
+      </div>
+    </section>
+
+    <section id="progress-card">
+      <div class="progress-row">
+        <span id="progress-label">0.0 L of 2.0 L</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="progress-fill"></div>
+      </div>
+      <p id="last-glass">No glass logged yet today</p>
+    </section>
+
+    <section id="action-bar">
+      <button id="drink-btn">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+          <path d="M12 2 C9.5 6 7 9.2 7 12.5 a5 5 0 0 0 10 0 C17 9.2 14.5 6 12 2 Z"/>
+        </svg>
+        <span>I drank a glass</span>
+      </button>
+    </section>
+  </main>
+
+  <!-- Settings modal -->
+  <div id="settings-modal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title">Settings</h2>
+      <label for="goal-input">Daily goal (liters)</label>
+      <input id="goal-input" type="number" min="0.5" max="5" step="0.1" inputmode="decimal" />
+      <label for="glass-size-input">Glass size (ml)</label>
+      <input id="glass-size-input" type="number" min="100" max="500" step="25" inputmode="numeric" />
+      <label for="reminder-input">Remind me after (minutes without water)</label>
+      <input id="reminder-input" type="number" min="15" max="240" step="15" inputmode="numeric" />
+      <label class="checkbox-row">
+        <input id="notif-toggle" type="checkbox" />
+        <span>Enable notifications (needs permission)</span>
+      </label>
+      <div class="modal-actions">
+        <button id="close-settings">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
