@@ -78,3 +78,24 @@ test("speciesFor falls back for unknown ids", () => {
   assert.strictEqual(Plants.speciesFor("nope").id, Plants.SPECIES[0].id);
   assert.strictEqual(Plants.speciesFor("rose").id, "rose");
 });
+
+/* ---------- insects ---------- */
+
+test("insect catalog has at least three kinds", () => {
+  assert.ok(Plants.INSECTS.length >= 3);
+});
+
+test("every insect has an id and svg with flapping wings", () => {
+  const ids = Plants.INSECTS.map((i) => i.id);
+  assert.strictEqual(new Set(ids).size, ids.length);
+  for (const i of Plants.INSECTS) {
+    assert.ok(i.svg.startsWith("<svg "), i.id + " svg");
+    assert.ok(i.svg.includes('class="insect-wing wing-l"'), i.id + " left wing");
+    assert.ok(i.svg.includes('class="insect-wing wing-r"'), i.id + " right wing");
+  }
+});
+
+test("insectFor falls back to the first insect for unknown ids", () => {
+  assert.strictEqual(Plants.insectFor("nope").id, Plants.INSECTS[0].id);
+  assert.ok(Plants.insectFor("bee").id === "bee");
+});

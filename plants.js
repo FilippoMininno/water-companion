@@ -179,14 +179,76 @@
     );
   }
 
+  /* Ambient insects that appear as the garden fills up. */
+  const INSECTS = [
+    {
+      id: "butterfly",
+      svg:
+        '<svg viewBox="0 0 44 36" width="36" aria-hidden="true">' +
+          '<g class="insect-wing wing-l">' +
+            '<path d="M22 18 C12 2 1 4 2 13 C3 21 13 23 22 20 Z" fill="#c77dff"/>' +
+            '<path d="M22 18 C13 30 4 33 3 26 C2 21 12 17 22 19 Z" fill="#e0aaff"/>' +
+          "</g>" +
+          '<g class="insect-wing wing-r">' +
+            '<path d="M22 18 C32 2 43 4 42 13 C41 21 31 23 22 20 Z" fill="#c77dff"/>' +
+            '<path d="M22 18 C31 30 40 33 41 26 C42 21 32 17 22 19 Z" fill="#e0aaff"/>' +
+          "</g>" +
+          '<ellipse cx="22" cy="18" rx="2.4" ry="9" fill="#4a3b55"/>' +
+        "</svg>",
+    },
+    {
+      id: "bee",
+      svg:
+        '<svg viewBox="0 0 44 36" width="32" aria-hidden="true">' +
+          '<g class="insect-wing wing-l">' +
+            '<ellipse cx="16" cy="10" rx="7" ry="4.5" fill="#dff3ff" opacity="0.75" transform="rotate(-24 16 10)"/>' +
+          "</g>" +
+          '<g class="insect-wing wing-r">' +
+            '<ellipse cx="28" cy="10" rx="7" ry="4.5" fill="#dff3ff" opacity="0.75" transform="rotate(24 28 10)"/>' +
+          "</g>" +
+          '<ellipse cx="22" cy="20" rx="9" ry="6.5" fill="#ffd166"/>' +
+          '<path d="M18 14.5 C19 18 19 22 18 25.5" stroke="#3d3d3d" stroke-width="2.4" fill="none"/>' +
+          '<path d="M23 14 C24 18 24 22 23 26" stroke="#3d3d3d" stroke-width="2.4" fill="none"/>' +
+          '<circle cx="13.5" cy="19" r="3.4" fill="#3d3d3d"/>' +
+          '<path d="M31 21 L36 23 M31 18 L36 16" stroke="#3d3d3d" stroke-width="1.4" stroke-linecap="round"/>' +
+        "</svg>",
+    },
+    {
+      id: "ladybug",
+      svg:
+        '<svg viewBox="0 0 44 36" width="28" aria-hidden="true">' +
+          '<g class="insect-wing wing-l">' +
+            '<ellipse cx="15" cy="11" rx="6" ry="3.6" fill="#dff3ff" opacity="0.65" transform="rotate(-20 15 11)"/>' +
+          "</g>" +
+          '<g class="insect-wing wing-r">' +
+            '<ellipse cx="29" cy="11" rx="6" ry="3.6" fill="#dff3ff" opacity="0.65" transform="rotate(20 29 11)"/>' +
+          "</g>" +
+          '<ellipse cx="22" cy="21" rx="8" ry="7" fill="#e5484d"/>' +
+          '<path d="M22 14 L22 28" stroke="#2b2b2b" stroke-width="1.6"/>' +
+          '<circle cx="18" cy="18" r="1.4" fill="#2b2b2b"/><circle cx="26" cy="19" r="1.4" fill="#2b2b2b"/>' +
+          '<circle cx="19" cy="24" r="1.2" fill="#2b2b2b"/><circle cx="25" cy="24" r="1.2" fill="#2b2b2b"/>' +
+          '<circle cx="22" cy="13" r="3.6" fill="#2b2b2b"/>' +
+        "</svg>",
+    },
+  ];
+
+  function insectFor(id) {
+    for (var i = 0; i < INSECTS.length; i++) {
+      if (INSECTS[i].id === id) return INSECTS[i];
+    }
+    return INSECTS[0];
+  }
+
   var api = {
     SPECIES: SPECIES,
+    INSECTS: INSECTS,
     SICK_MARKUP: SICK_MARKUP,
     markupFor: markupFor,
     speciesFor: speciesFor,
     pickSpecies: pickSpecies,
     randomSpecies: randomSpecies,
     svgFor: svgFor,
+    insectFor: insectFor,
   };
 
   if (typeof module !== "undefined" && module.exports) {

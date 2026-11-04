@@ -178,11 +178,20 @@ function freeSlot() {
 function plantInGarden(color) {
   const entries = loadGarden();
   const slot = freeSlot();
-  entries.push({ at: Date.now(), color: color || Plants.speciesFor(speciesId).color, species: speciesId, slot });
+  entries.push({
+    at: Date.now(),
+    color: color || Plants.speciesFor(speciesId).color,
+    species: speciesId,
+    slot,
+    scale: 0.85 + Math.random() * 0.35,
+  });
   saveGarden(entries.slice(-SLOTS.length * 2));
   renderGarden();
+  renderInsects();
   return slot;
 }
+
+const GARDEN_PLANT_SIZE = 96;
 
 function renderGarden() {
   const entries = loadGarden();
@@ -198,8 +207,34 @@ function renderGarden() {
     wrap.style.left = slot.left + "%";
     wrap.style.bottom = slot.bottom + "%";
     wrap.style.animationDelay = (e.slot % 5) * 0.4 + "s";
-    wrap.innerHTML = Plants.svgFor(e.species, 74);
+    wrap.innerHTML = Plants.svgFor(e.species, Math.round(GARDEN_PLANT_SIZE * (e.scale || 1)));
     els.garden.appendChild(wrap);
+  }
+}
+
+/* ---------- ambient insects (more as the garden fills up) ---------- */
+function insectCount() {
+  const plants = Math.min(loadGarden().length, SLOTS.length);
+  return Math.min(8, Math.floor(plants / 2));
+}
+
+function renderInsects() {
+  els.stars.querySelectorAll(".insect").forEach((n) => n.remove());
+  const count = insectCount();
+  for (let i = 0; i < count; i++) {
+    const insect = Plants.INSECTS[i % Plants.INSECTS.length];
+    const el = document.createElement("div");
+    el.className = "insect";
+    el.style.left = 8 + Math.random() * 80 + "%";
+    el.style.top = 30 + Math.random() * 40 + "%";
+    el.style.setProperty("--dur", 9 + Math.random() * 8 + "s");
+    el.style.setProperty("--dx1", (Math.random() * 60 - 30).toFixed(0) + "px");
+    el.style.setProperty("--dy1", (Math.random() * 40 - 20).toFixed(0) + "px");
+    el.style.setProperty("--dx2", (Math.random() * 100 - 50).toFixed(0) + "px");
+    el.style.setProperty("--dy2", (Math.random() * 60 - 30).toFixed(0) + "px");
+    el.style.animationDelay = -Math.random() * 10 + "s";
+    el.innerHTML = insect.svg;
+    els.stars.appendChild(el);
   }
 }
 
@@ -449,6 +484,7 @@ function init() {
   loadState();
   renderStars();
   renderGarden();
+  renderInsects();
   if (!logs.length) plantStatus = "seed";
   renderPlant();
   renderProgress();
