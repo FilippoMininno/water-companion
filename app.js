@@ -130,7 +130,7 @@ function renderPlant() {
   const body = els.plantBody;
   els.plantInner.innerHTML = Plants.markupFor(speciesId);
   body.classList.remove("stage-seed", "stage-sprout", "stage-small", "stage-medium", "stage-large", "sick", "dead", "bloomed", "healthy", "grew");
-  els.plant.className = "mood-" + Growth.potMood(plantStatus);
+  els.plant.setAttribute("class", "mood-" + Growth.potMood(plantStatus));
 
   if (plantStatus === "dead") {
     body.classList.add("dead");
