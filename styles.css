@@ -151,42 +151,45 @@ body.theme-sunset #sun { top: 12%; filter: drop-shadow(0 0 30px rgba(255, 130, 8
   border-radius: 50% 50% 0 0 / 12% 12% 0 0;
 }
 
-#grass {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 40%;
-  pointer-events: none;
-}
 .grass-tuft {
   position: absolute;
   transform-origin: 50% 100%;
   animation: grass-sway 4s ease-in-out infinite alternate;
+  pointer-events: none;
 }
+.grass-back { filter: brightness(0.92) saturate(1.05); }
+.grass-front { filter: brightness(1.04); }
 @keyframes grass-sway {
   from { rotate: -4deg; }
   to   { rotate: 5deg; }
 }
 
+.meadow-flower {
+  position: absolute;
+  transform-origin: 50% 100%;
+  animation: grass-sway 5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
 .garden-flower {
   position: absolute;
-  transform-origin: 50% 92%;
-  animation: sway 4.5s ease-in-out infinite alternate;
-  filter: drop-shadow(0 3px 2px rgba(70, 50, 20, 0.18));
+  transform-origin: 50% 100%;
+  animation: sway 5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 4px 3px rgba(70, 50, 20, 0.22));
 }
-.garden-flower:nth-child(even) { animation-duration: 5.5s; }
+.garden-flower:nth-child(3n) { animation-duration: 6.2s; }
 @keyframes sway {
-  from { transform: rotate(-4deg); }
-  to   { transform: rotate(4deg); }
+  from { transform: rotate(-3deg); }
+  to   { transform: rotate(3deg); }
 }
 
 .transplant-clone {
   position: fixed;
   z-index: 5;
   pointer-events: none;
-  transform-origin: 50% 73%;
+  transform-origin: 50% 100%;
   transition: transform 1.3s cubic-bezier(0.45, 0.05, 0.35, 1), opacity 1.3s ease;
+  filter: drop-shadow(0 6px 4px rgba(70, 50, 20, 0.25));
 }
 
 #stars { position: absolute; inset: 0; opacity: 0; transition: opacity 2s ease; }

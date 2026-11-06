@@ -22,6 +22,7 @@
       name: "Rose",
       color: "#e5484d",
       bloomOrigin: "100px 44px",
+      gardenBox: "58 6 84 120",
       markup:
         '<path class="stem" d="M100 190 C97 160 103 128 99 96 C97 80 101 70 100 56" stroke="#3e7d46" stroke-width="7" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 150 C80 150 64 138 58 118 C80 112 98 126 100 150 Z" fill="#4f9d55"/>' +
@@ -44,6 +45,7 @@
       name: "Tulip",
       color: "#ff8f42",
       bloomOrigin: "100px 50px",
+      gardenBox: "62 2 76 122",
       markup:
         '<path class="stem" d="M100 190 C100 156 100 122 100 86" stroke="#4c8c3b" stroke-width="7" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 168 C82 164 68 148 64 122 C84 124 98 140 100 168 Z" fill="#57a344"/>' +
@@ -63,6 +65,7 @@
       name: "Sunflower",
       color: "#ffc247",
       bloomOrigin: "100px 62px",
+      gardenBox: "52 12 96 128",
       markup:
         '<path class="stem" d="M100 190 C100 160 102 130 100 96" stroke="#4c8c3b" stroke-width="9" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 152 C74 154 56 138 50 112 C78 106 98 124 100 152 Z" fill="#57a344"/>' +
@@ -85,6 +88,7 @@
       name: "Daisy",
       color: "#ffffff",
       bloomOrigin: "100px 52px",
+      gardenBox: "62 10 76 118",
       markup:
         '<path class="stem" d="M100 190 C99 160 101 130 100 100 C99 88 101 80 100 74" stroke="#6aa84f" stroke-width="4.5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 156 C86 152 78 142 76 130 C90 130 99 140 100 156 Z" fill="#7ab862"/>' +
@@ -104,6 +108,7 @@
       name: "Bellflower",
       color: "#8b7cf8",
       bloomOrigin: "100px 60px",
+      gardenBox: "58 40 84 96",
       markup:
         '<path class="stem" d="M100 190 C98 160 104 132 100 104 C99 92 101 84 100 74" stroke="#4f8f57" stroke-width="6" fill="none" stroke-linecap="round"/>' +
         '<path class="stem" d="M100 104 C92 96 84 92 76 90" stroke="#4f8f57" stroke-width="4" fill="none" stroke-linecap="round"/>' +
@@ -126,6 +131,7 @@
       name: "Poppy",
       color: "#ff5f5f",
       bloomOrigin: "100px 48px",
+      gardenBox: "60 8 80 110",
       markup:
         '<path class="stem" d="M100 190 C96 160 106 124 100 92" stroke="#5e8c61" stroke-width="5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 150 C82 148 70 140 66 128 C82 124 98 132 100 150 Z" fill="#6da070"/>' +
@@ -257,6 +263,35 @@
     return INSECTS[0];
   }
 
+  /*
+   * Garden portrait: a per-species cropped viewBox framing the bloom and
+   * upper stem, so garden plants render large and lush instead of tiny.
+   */
+  function gardenSvg(id, size) {
+    var s = speciesFor(id);
+    var parts = s.gardenBox.split(" ").map(Number);
+    var w = parts[2];
+    var h = parts[3];
+    var width = size || 140;
+    return (
+      '<svg viewBox="' + s.gardenBox + '" width="' + width + '" height="' +
+      Math.round((width * h) / w) + '" aria-hidden="true">' +
+      s.markup +
+      "</svg>"
+    );
+  }
+
+  /* Tiny wildflower dotting the meadow. variant: 0..n alternates white/pink. */
+  function meadowFlower(variant) {
+    var petal = variant % 2 === 0 ? "#ffffff" : "#ffd7e0";
+    return (
+      '<svg viewBox="0 0 20 20" width="15" aria-hidden="true">' +
+      petalRing(10, 11, 6, 2.6, 5, petal) +
+      '<circle cx="10" cy="11" r="2.8" fill="#ffd166"/>' +
+      "</svg>"
+    );
+  }
+
   /* Grass tuft for the garden hill. variant: 0..2 color schemes. */
   function grassTuft(variant) {
     var v = ((variant % 3) + 3) % 3;
@@ -285,6 +320,8 @@
     pickSpecies: pickSpecies,
     randomSpecies: randomSpecies,
     svgFor: svgFor,
+    gardenSvg: gardenSvg,
+    meadowFlower: meadowFlower,
     insectFor: insectFor,
     grassTuft: grassTuft,
   };

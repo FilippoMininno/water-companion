@@ -109,3 +109,39 @@ test("grassTuft builds a tuft svg for each variant", () => {
     assert.ok((svg.match(/<path/g) || []).length >= 5, "variant " + v + " needs several blades");
   }
 });
+
+/* ---------- garden portraits ---------- */
+
+test("every species has a valid garden crop box", () => {
+  for (const s of Plants.SPECIES) {
+    const parts = s.gardenBox.split(" ").map(Number);
+    assert.strictEqual(parts.length, 4, s.id + " gardenBox needs 4 numbers");
+    const [x, y, w, h] = parts;
+    assert.ok(x >= 0 && y >= 0, s.id + " box origin must be inside the canvas");
+    assert.ok(w >= 40 && h >= 40, s.id + " crop must keep the bloom large");
+    assert.ok(x + w <= 200 && y + h <= 260, s.id + " crop must stay inside the canvas");
+  }
+});
+
+test("gardenSvg uses the species crop box and keeps aspect", () => {
+  for (const s of Plants.SPECIES) {
+    const svg = Plants.gardenSvg(s.id, 150);
+    assert.ok(svg.includes('viewBox="' + s.gardenBox + '"'), s.id);
+    assert.ok(svg.includes('width="150"'), s.id);
+    const [, , w, h] = s.gardenBox.split(" ").map(Number);
+    assert.ok(svg.includes('height="' + Math.round((150 * h) / w) + '"'), s.id);
+  }
+});
+
+test("gardenSvg falls back to a size and species", () => {
+  assert.ok(Plants.gardenSvg("nope").includes('width="140"'));
+});
+
+test("meadowFlower builds a tiny wildflower svg", () => {
+  for (const v of [0, 1, 2, 3]) {
+    const svg = Plants.meadowFlower(v);
+    assert.ok(svg.startsWith("<svg "), "variant " + v);
+    assert.ok((svg.match(/<ellipse/g) || []).length >= 6, "variant " + v + " needs petals");
+    assert.ok(svg.includes("#ffd166"), "variant " + v + " needs a yellow center");
+  }
+});

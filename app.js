@@ -207,14 +207,48 @@ function plantInGarden(color) {
   return slot;
 }
 
-const GARDEN_PLANT_SIZE = 96;
+const GARDEN_PLANT_SIZE = 120;
+
+function grassLayer(count, minBottom, maxBottom, minScale, maxScale, cls) {
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("div");
+    el.className = cls;
+    el.style.left = Math.random() * 100 + "%";
+    el.style.bottom = (minBottom + Math.random() * (maxBottom - minBottom)).toFixed(1) + "%";
+    const scale = minScale + Math.random() * (maxScale - minScale);
+    el.style.transform = `scale(${scale.toFixed(2)})`;
+    el.style.animationDelay = -Math.random() * 4 + "s";
+    el.innerHTML = Plants.grassTuft(i);
+    frag.appendChild(el);
+  }
+  return frag;
+}
+
+function meadowLayer(count) {
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("div");
+    el.className = "meadow-flower";
+    el.style.left = Math.random() * 96 + "%";
+    el.style.bottom = (4 + Math.random() * 30).toFixed(1) + "%";
+    el.style.animationDelay = -Math.random() * 4 + "s";
+    el.innerHTML = Plants.meadowFlower(i);
+    frag.appendChild(el);
+  }
+  return frag;
+}
 
 function renderGarden() {
   const entries = loadGarden();
   els.garden.innerHTML = "";
-  const count = Math.min(entries.length, SLOTS.length);
-  const start = entries.length - count;
-  for (let i = 0; i < count; i++) {
+  const plants = Math.min(entries.length, SLOTS.length);
+
+  els.garden.appendChild(grassLayer(14, 6, 34, 1.0, 1.7, "grass-tuft grass-back"));
+  els.garden.appendChild(meadowLayer(plants + 4));
+
+  const start = entries.length - plants;
+  for (let i = 0; i < plants; i++) {
     const e = entries[start + i];
     const slot = SLOTS[e.slot % SLOTS.length];
     const wrap = document.createElement("div");
@@ -223,30 +257,17 @@ function renderGarden() {
     wrap.style.left = slot.left + "%";
     wrap.style.bottom = slot.bottom + "%";
     wrap.style.animationDelay = (e.slot % 5) * 0.4 + "s";
-    wrap.innerHTML = Plants.svgFor(e.species, Math.round(GARDEN_PLANT_SIZE * (e.scale || 1)));
+    const perspective = 1 - (slot.bottom / 100) * 0.45;
+    wrap.innerHTML = Plants.gardenSvg(e.species, Math.round(GARDEN_PLANT_SIZE * (e.scale || 1) * perspective));
     els.garden.appendChild(wrap);
   }
+
+  els.garden.appendChild(grassLayer(9, 0, 9, 0.75, 1.25, "grass-tuft grass-front"));
+
   if (els.gardenCount) {
     const bloomed = entries.length;
     els.gardenCount.hidden = bloomed === 0;
     els.gardenCount.textContent = "🌼 " + bloomed;
-  }
-}
-
-/* ---------- ambient grass field ---------- */
-function renderGrass() {
-  const grass = $("#grass");
-  grass.innerHTML = "";
-  for (let i = 0; i < 18; i++) {
-    const el = document.createElement("div");
-    el.className = "grass-tuft";
-    el.style.left = Math.random() * 100 + "%";
-    el.style.bottom = Math.random() * 26 + "%";
-    const scale = 0.7 + Math.random() * 0.9;
-    el.style.transform = `scale(${scale.toFixed(2)})`;
-    el.style.animationDelay = -Math.random() * 4 + "s";
-    el.innerHTML = Plants.grassTuft(i);
-    grass.appendChild(el);
   }
 }
 
@@ -328,7 +349,7 @@ function transplantBloom() {
   const plantRect = els.plant.getBoundingClientRect();
   const clone = document.createElement("div");
   clone.className = "transplant-clone";
-  clone.innerHTML = Plants.svgFor(speciesId, Math.min(200, plantRect.width));
+  clone.innerHTML = Plants.gardenSvg(speciesId, 170);
   document.body.appendChild(clone);
 
   const size = clone.firstElementChild.getBoundingClientRect();
@@ -338,13 +359,14 @@ function transplantBloom() {
   clone.style.top = startY + "px";
 
   const t = targetEl.getBoundingClientRect();
+  const targetScale = t.width / size.width;
   const targetX = t.left + t.width / 2 - size.width / 2;
   const targetY = t.bottom - size.height;
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      clone.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(0.42)`;
-      clone.style.opacity = "0.9";
+      clone.style.transform = `translate(${targetX - startX}px, ${targetY - startY}px) scale(${targetScale.toFixed(3)})`;
+      clone.style.opacity = "0.95";
     });
   });
 
@@ -582,7 +604,6 @@ function init() {
   if (!speciesId) speciesId = Plants.randomSpecies();
   applyTheme();
   renderStars();
-  renderGrass();
   renderGarden();
   renderInsects();
   if (!logs.length) plantStatus = "seed";
