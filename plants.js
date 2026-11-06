@@ -25,7 +25,9 @@
       markup:
         '<path class="stem" d="M100 190 C97 160 103 128 99 96 C97 80 101 70 100 56" stroke="#3e7d46" stroke-width="7" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 150 C80 150 64 138 58 118 C80 112 98 126 100 150 Z" fill="#4f9d55"/>' +
+        '<path class="vein" d="M97 148 C86 142 74 134 64 124" stroke="#3c7a42" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 120 C120 120 136 108 142 88 C120 82 102 96 100 120 Z" fill="#5cb262"/>' +
+        '<path class="vein" d="M103 118 C114 112 126 104 136 94" stroke="#468a4b" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M99 172 C86 168 78 160 76 148 C90 146 99 156 99 172 Z" fill="#4f9d55"/>' +
         '<g class="bloom-part" style="--bloom-origin:100px 44px">' +
           '<path d="M100 64 C90 58 86 48 90 38 L100 46 L110 38 C114 48 110 58 100 64 Z" fill="#3e7d46"/>' +
@@ -44,7 +46,9 @@
       markup:
         '<path class="stem" d="M100 190 C100 156 100 122 100 86" stroke="#4c8c3b" stroke-width="7" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 168 C82 164 68 148 64 122 C84 124 98 140 100 168 Z" fill="#57a344"/>' +
+        '<path class="vein" d="M97 164 C86 156 76 144 70 130" stroke="#3f7d33" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 176 C118 172 132 156 136 130 C116 132 102 148 100 176 Z" fill="#63b350"/>' +
+        '<path class="vein" d="M103 172 C114 164 124 152 130 138" stroke="#4c8f3a" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<g class="bloom-part" style="--bloom-origin:100px 50px">' +
           '<path d="M78 60 C78 40 84 24 100 22 C116 24 122 40 122 60 C118 70 108 74 100 74 C92 74 82 70 78 60 Z" fill="#ff8f42"/>' +
           '<path d="M84 58 C84 42 88 30 100 28 C112 30 116 42 116 58 C112 64 106 66 100 66 C94 66 88 64 84 58 Z" fill="#ffab6b"/>' +
@@ -60,7 +64,9 @@
       markup:
         '<path class="stem" d="M100 190 C100 160 102 130 100 96" stroke="#4c8c3b" stroke-width="9" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 152 C74 154 56 138 50 112 C78 106 98 124 100 152 Z" fill="#57a344"/>' +
+        '<path class="vein" d="M97 148 C82 142 66 130 56 118" stroke="#3f7d33" stroke-width="2" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 130 C126 132 144 116 150 90 C122 84 102 102 100 130 Z" fill="#63b350"/>' +
+        '<path class="vein" d="M103 126 C118 120 134 108 144 96" stroke="#4c8f3a" stroke-width="2" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 172 C84 168 76 158 74 146 C90 144 99 156 100 172 Z" fill="#57a344"/>' +
         '<g class="bloom-part" style="--bloom-origin:100px 62px">' +
           petalRing(100, 62, 14, 6, 24, "#ffc247") +
@@ -79,7 +85,9 @@
       markup:
         '<path class="stem" d="M100 190 C99 160 101 130 100 100 C99 88 101 80 100 74" stroke="#6aa84f" stroke-width="4.5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 156 C86 152 78 142 76 130 C90 130 99 140 100 156 Z" fill="#7ab862"/>' +
+        '<path class="vein" d="M98 152 C91 146 85 140 81 134" stroke="#5b9440" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 132 C114 128 122 118 124 106 C110 106 101 116 100 132 Z" fill="#86c46e"/>' +
+        '<path class="vein" d="M102 128 C109 122 115 116 119 110" stroke="#5b9440" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
         '<path class="bloom-part" style="--bloom-origin:100px 52px">' +
           petalRing(100, 52, 12, 4, 19, "#ffffff", ' stroke="#e8eef2" stroke-width="0.6"') +
           '<circle cx="100" cy="52" r="9" fill="#ffd166"/>' +
@@ -97,7 +105,9 @@
         '<path class="stem" d="M100 104 C92 96 84 92 76 90" stroke="#4f8f57" stroke-width="4" fill="none" stroke-linecap="round"/>' +
         '<path class="stem" d="M100 116 C108 108 116 104 124 102" stroke="#4f8f57" stroke-width="4" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 150 C82 148 70 138 66 122 C84 118 98 128 100 150 Z" fill="#5da367"/>' +
+        '<path class="vein" d="M97 146 C86 140 76 132 70 126" stroke="#47804f" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 136 C118 134 130 124 134 108 C116 104 102 114 100 136 Z" fill="#69b173"/>' +
+        '<path class="vein" d="M103 132 C114 126 124 118 128 112" stroke="#4f8f57" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<g class="bloom-part" style="--bloom-origin:100px 60px">' +
           '<path d="M88 46 C88 60 94 70 100 70 C106 70 112 60 112 46 C104 50 96 50 88 46 Z" fill="#8b7cf8"/>' +
           '<path d="M90 46 C92 58 96 66 100 66 C102 62 104 52 104 46 C99 49 95 49 90 46 Z" fill="#a79af9"/>' +
@@ -114,7 +124,9 @@
       markup:
         '<path class="stem" d="M100 190 C96 160 106 124 100 92" stroke="#5e8c61" stroke-width="5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 150 C82 148 70 140 66 128 C82 124 98 132 100 150 Z" fill="#6da070"/>' +
+        '<path class="vein" d="M97 146 C87 141 78 136 72 130" stroke="#527a55" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 128 C118 126 130 118 134 106 C118 102 102 110 100 128 Z" fill="#79ac7c"/>' +
+        '<path class="vein" d="M103 124 C113 119 122 114 128 108" stroke="#5c8a5f" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M99 172 C88 168 82 160 82 150 C94 150 99 160 99 172 Z" fill="#6da070"/>' +
         '<g class="bloom-part" style="--bloom-origin:100px 48px">' +
           '<circle cx="86" cy="46" r="17" fill="#ff5f5f"/>' +
@@ -239,6 +251,25 @@
     return INSECTS[0];
   }
 
+  /* Grass tuft for the garden hill. variant: 0..2 color schemes. */
+  function grassTuft(variant) {
+    var v = ((variant % 3) + 3) % 3;
+    var colors = ["#6fae4e", "#7fbe5c", "#5f9c44"];
+    var a = colors[v];
+    var b = colors[(v + 1) % 3];
+    var c = colors[(v + 2) % 3];
+    return (
+      '<svg viewBox="0 0 40 32" width="46" aria-hidden="true">' +
+        '<path d="M20 32 C19 22 17 14 13 6" stroke="' + a + '" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+        '<path d="M20 32 C20 20 20 12 21 3" stroke="' + b + '" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+        '<path d="M20 32 C22 24 26 16 32 9" stroke="' + a + '" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+        '<path d="M20 32 C18 26 14 20 8 15" stroke="' + c + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>' +
+        '<path d="M20 32 C22 28 27 23 34 20" stroke="' + b + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+        '<path d="M20 32 C17 27 12 24 6 22" stroke="' + c + '" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+      "</svg>"
+    );
+  }
+
   var api = {
     SPECIES: SPECIES,
     INSECTS: INSECTS,
@@ -249,6 +280,7 @@
     randomSpecies: randomSpecies,
     svgFor: svgFor,
     insectFor: insectFor,
+    grassTuft: grassTuft,
   };
 
   if (typeof module !== "undefined" && module.exports) {

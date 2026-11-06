@@ -48,7 +48,7 @@ const els = {
 let settings = { ...DEFAULTS };
 let logs = [];          // [{ at: timestamp, ml }]
 let dayKey = todayKey();
-let speciesId = Plants.SPECIES[0].id;
+let speciesId = null;
 let plantStatus = "seed"; // seed | sprout | small | medium | large | sick | dead | bloomed | transplanted
 let reminderTimer = null;
 let statusTimer = null;
@@ -78,9 +78,10 @@ function loadState() {
     if (!raw) return;
     const saved = JSON.parse(raw);
     settings = { ...DEFAULTS, ...(saved.settings || {}) };
-    speciesId = saved.speciesId && Plants.speciesFor(saved.speciesId) ? saved.speciesId : speciesId;
+    speciesId = saved.speciesId && Plants.speciesFor(saved.speciesId) ? saved.speciesId : null;
     if (Growth.needsRollover(saved.day, dayKey)) {
       // New day since the last visit: pot a fresh, random species and reset the day.
+      if (!speciesId) speciesId = Plants.randomSpecies();
       if (Growth.shouldPlantOnRollover(saved)) {
         plantInGarden(saved.bloomColor);
       }
@@ -126,7 +127,8 @@ function stageForProgress() {
 function renderPlant() {
   const body = els.plantBody;
   els.plantInner.innerHTML = Plants.markupFor(speciesId);
-  body.classList.remove("stage-seed", "stage-sprout", "stage-small", "stage-medium", "stage-large", "sick", "dead", "bloomed", "healthy");
+  body.classList.remove("stage-seed", "stage-sprout", "stage-small", "stage-medium", "stage-large", "sick", "dead", "bloomed", "healthy", "grew");
+  els.plant.className = "mood-" + Growth.potMood(plantStatus);
 
   if (plantStatus === "dead") {
     body.classList.add("dead");
@@ -215,6 +217,43 @@ function renderGarden() {
     wrap.style.animationDelay = (e.slot % 5) * 0.4 + "s";
     wrap.innerHTML = Plants.svgFor(e.species, Math.round(GARDEN_PLANT_SIZE * (e.scale || 1)));
     els.garden.appendChild(wrap);
+  }
+}
+
+/* ---------- ambient grass field ---------- */
+function renderGrass() {
+  const grass = $("#grass");
+  grass.innerHTML = "";
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement("div");
+    el.className = "grass-tuft";
+    el.style.left = Math.random() * 100 + "%";
+    el.style.bottom = Math.random() * 26 + "%";
+    const scale = 0.7 + Math.random() * 0.9;
+    el.style.transform = `scale(${scale.toFixed(2)})`;
+    el.style.animationDelay = -Math.random() * 4 + "s";
+    el.innerHTML = Plants.grassTuft(i);
+    grass.appendChild(el);
+  }
+}
+
+/* ---------- sparkle burst on bloom ---------- */
+function spawnBurst(x, y, color) {
+  const colors = [color, "#ffd166", "#fff3bf", "#ff8fb1"];
+  for (let i = 0; i < 14; i++) {
+    const s = document.createElement("div");
+    s.className = "spark";
+    const angle = (Math.PI * 2 * i) / 14 + Math.random() * 0.4;
+    const dist = 60 + Math.random() * 80;
+    s.style.left = x + "px";
+    s.style.top = y + "px";
+    s.style.background = colors[i % colors.length];
+    s.style.setProperty("--tx", Math.cos(angle) * dist + "px");
+    s.style.setProperty("--ty", Math.sin(angle) * dist - 40 + "px");
+    s.style.animationDelay = Math.random() * 0.15 + "s";
+    s.style.width = s.style.height = 5 + Math.random() * 7 + "px";
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1300);
   }
 }
 
@@ -328,6 +367,7 @@ function drinkGlass() {
 
   plantStatus = stageForProgress();
   renderPlant();
+  triggerGrowthAnimation();
   scheduleReminder();
   scheduleStatusCheck();
 
@@ -358,12 +398,28 @@ function animateDroplet() {
   setTimeout(() => (d.style.opacity = "0"), 950);
 }
 
+function triggerGrowthAnimation() {
+  const body = els.plantBody;
+  body.classList.remove("grew");
+  void body.offsetWidth;
+  body.classList.add("grew");
+  els.plant.classList.remove("splash");
+  void els.plant.offsetWidth;
+  els.plant.classList.add("splash");
+  setTimeout(() => {
+    body.classList.remove("grew");
+    els.plant.classList.remove("splash");
+  }, 1300);
+}
+
 function bloom() {
   plantStatus = "bloomed";
   renderPlant();
   persist();
   say("We did it! I'm blooming! 🌸");
   toast("Congratulations! Your plant bloomed today 🌸");
+  const rect = els.plant.getBoundingClientRect();
+  spawnBurst(rect.left + rect.width / 2, rect.top + rect.height * 0.3, Plants.speciesFor(speciesId).color);
   if (settings.notifications && Notification.permission === "granted") {
     try {
       new Notification("Hydra", { body: "Your plant bloomed! Beautiful job staying hydrated today 🌸" });
@@ -488,7 +544,9 @@ function checkNewDay() {
 /* ---------- init ---------- */
 function init() {
   loadState();
+  if (!speciesId) speciesId = Plants.randomSpecies();
   renderStars();
+  renderGrass();
   renderGarden();
   renderInsects();
   if (!logs.length) plantStatus = "seed";

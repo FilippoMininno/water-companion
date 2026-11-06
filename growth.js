@@ -89,6 +89,16 @@
     return saved.plantStatus === "bloomed";
   }
 
+  /* Pot face mood for a given plant status. */
+  function potMood(status) {
+    if (status === "dead") return "dead";
+    if (status === "sick") return "sad";
+    if (status === "bloomed" || status === "transplanted") return "blissful";
+    if (status === "medium" || status === "large") return "happy";
+    if (status === "seed") return "neutral";
+    return "content";
+  }
+
   var api = {
     STAGES: STAGES,
     STAGE_SCALES: STAGE_SCALES,
@@ -101,6 +111,7 @@
     normalizeSettings: normalizeSettings,
     needsRollover: needsRollover,
     shouldPlantOnRollover: shouldPlantOnRollover,
+    potMood: potMood,
   };
 
   if (typeof module !== "undefined" && module.exports) {

@@ -99,3 +99,13 @@ test("insectFor falls back to the first insect for unknown ids", () => {
   assert.strictEqual(Plants.insectFor("nope").id, Plants.INSECTS[0].id);
   assert.ok(Plants.insectFor("bee").id === "bee");
 });
+
+/* ---------- grass ---------- */
+
+test("grassTuft builds a tuft svg for each variant", () => {
+  for (const v of [0, 1, 2, 3, -1]) {
+    const svg = Plants.grassTuft(v);
+    assert.ok(svg.startsWith("<svg "), "variant " + v);
+    assert.ok((svg.match(/<path/g) || []).length >= 5, "variant " + v + " needs several blades");
+  }
+});

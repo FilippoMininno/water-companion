@@ -173,3 +173,17 @@ test("shouldPlantOnRollover only for un-transplanted blooms", () => {
   assert.strictEqual(Growth.shouldPlantOnRollover({ plantStatus: "large" }), false);
   assert.strictEqual(Growth.shouldPlantOnRollover(null), false);
 });
+
+/* ---------- pot face mood ---------- */
+
+test("potMood maps every plant status to a face mood", () => {
+  assert.strictEqual(Growth.potMood("seed"), "neutral");
+  assert.strictEqual(Growth.potMood("sprout"), "content");
+  assert.strictEqual(Growth.potMood("small"), "content");
+  assert.strictEqual(Growth.potMood("medium"), "happy");
+  assert.strictEqual(Growth.potMood("large"), "happy");
+  assert.strictEqual(Growth.potMood("bloomed"), "blissful");
+  assert.strictEqual(Growth.potMood("transplanted"), "blissful");
+  assert.strictEqual(Growth.potMood("sick"), "sad");
+  assert.strictEqual(Growth.potMood("dead"), "dead");
+});

@@ -3,19 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#8ecae6" />
+  <meta name="theme-color" content="#ffd9a8" />
   <title>Hydra — your water companion</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div id="sky">
-    <div id="sun"></div>
+    <svg id="sun" viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <radialGradient id="sun-core" cx="0.4" cy="0.4" r="0.8">
+          <stop offset="0" stop-color="#fff6d5"/>
+          <stop offset="0.55" stop-color="#ffd166"/>
+          <stop offset="1" stop-color="#ff9e2c"/>
+        </radialGradient>
+      </defs>
+      <g class="sun-rays" stroke="#ffb703" stroke-width="3.4" stroke-linecap="round" opacity="0.85">
+        <line x1="50" y1="3" x2="50" y2="15"/>
+        <line x1="50" y1="85" x2="50" y2="97"/>
+        <line x1="3" y1="50" x2="15" y2="50"/>
+        <line x1="85" y1="50" x2="97" y2="50"/>
+        <line x1="17" y1="17" x2="25" y2="25"/>
+        <line x1="75" y1="75" x2="83" y2="83"/>
+        <line x1="75" y1="25" x2="83" y2="17"/>
+        <line x1="17" y1="83" x2="25" y2="75"/>
+      </g>
+      <circle cx="50" cy="50" r="21" fill="url(#sun-core)"/>
+    </svg>
     <div class="cloud c1"></div>
     <div class="cloud c2"></div>
     <div class="cloud c3"></div>
     <div id="stars"></div>
     <div id="hill-back"></div>
     <div id="garden"></div>
+    <div id="grass"></div>
   </div>
 
   <main id="app">
@@ -41,14 +61,55 @@
               <stop offset="0" stop-color="#ef9a60"/>
               <stop offset="1" stop-color="#cd7038"/>
             </linearGradient>
+            <radialGradient id="soil-grad" cx="0.5" cy="0.3" r="0.9">
+              <stop offset="0" stop-color="#7a5240"/>
+              <stop offset="1" stop-color="#4e3223"/>
+            </radialGradient>
+            <filter id="soft-glow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
           </defs>
           <g id="pot">
-            <ellipse cx="100" cy="254" rx="52" ry="9" fill="rgba(0,0,0,0.18)"/>
+            <ellipse cx="100" cy="254" rx="52" ry="9" fill="rgba(60,30,10,0.22)"/>
             <path d="M55 190 L145 190 L133 250 Q132 258 124 258 L76 258 Q68 258 67 250 Z" fill="url(#pot-grad)"/>
             <path d="M67 250 Q68 258 76 258 L124 258 Q132 258 133 250 L134 244 L66 244 Z" fill="#9c4c22"/>
             <path d="M50 178 L150 178 L150 196 L50 196 Z" fill="url(#rim-grad)"/>
-            <ellipse id="soil" cx="100" cy="190" rx="46" ry="8" fill="#5b3a29"/>
-            <ellipse cx="100" cy="188" rx="40" ry="6" fill="#6e4936"/>
+            <ellipse cx="100" cy="190" rx="46" ry="8" fill="url(#soil-grad)"/>
+            <ellipse cx="92" cy="188" rx="16" ry="2.6" fill="#8a6248" opacity="0.5"/>
+            <ellipse cx="112" cy="192" rx="12" ry="2.2" fill="#3a2418" opacity="0.5"/>
+            <g id="pot-face">
+              <g class="face eyes-round">
+                <circle cx="84" cy="212" r="5" fill="#4a2f1d"/>
+                <circle cx="116" cy="212" r="5" fill="#4a2f1d"/>
+                <circle cx="85.8" cy="210.2" r="1.6" fill="#fff" opacity="0.75"/>
+                <circle cx="117.8" cy="210.2" r="1.6" fill="#fff" opacity="0.75"/>
+              </g>
+              <g class="face eyes-happy">
+                <path d="M77 213 q7 -9 14 0" stroke="#4a2f1d" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+                <path d="M109 213 q7 -9 14 0" stroke="#4a2f1d" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+              </g>
+              <g class="face eyes-sad">
+                <circle cx="84" cy="214" r="4" fill="#4a2f1d"/>
+                <circle cx="116" cy="214" r="4" fill="#4a2f1d"/>
+                <path d="M76 207 L92 210" stroke="#4a2f1d" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M108 210 L124 207" stroke="#4a2f1d" stroke-width="2.4" stroke-linecap="round"/>
+              </g>
+              <g class="face eyes-dead">
+                <path d="M79 208 L89 218 M89 208 L79 218" stroke="#4a2f1d" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M111 208 L121 218 M121 208 L111 218" stroke="#4a2f1d" stroke-width="2.4" stroke-linecap="round"/>
+              </g>
+              <path class="mouth m-flat" d="M92 228 L108 228" stroke="#4a2f1d" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+              <path class="mouth m-smile" d="M89 226 Q100 236 111 226" stroke="#4a2f1d" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+              <path class="mouth m-grin" d="M85 224 Q100 242 115 224 Q100 232 85 224 Z" fill="#4a2f1d"/>
+              <path class="mouth m-sad" d="M90 233 Q100 224 110 233" stroke="#4a2f1d" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+              <circle class="blush" cx="70" cy="223" r="5" fill="#ff9d8a" opacity="0"/>
+              <circle class="blush" cx="130" cy="223" r="5" fill="#ff9d8a" opacity="0"/>
+              <path class="tear" d="M84 219 C82 224 81 227 81 229 a3.2 3.2 0 0 0 6.4 0 C87.4 227 86 224 84 219 Z" fill="#7fd0f0" opacity="0"/>
+            </g>
           </g>
           <g id="droplet" opacity="0">
             <path d="M100 40 C92 55 84 66 84 76 a16 16 0 0 0 32 0 C116 66 108 55 100 40 Z" fill="#63c7f2"/>
