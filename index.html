@@ -29,6 +29,13 @@
       </g>
       <circle cx="50" cy="50" r="21" fill="url(#sun-core)"/>
     </svg>
+    <svg id="moon" viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="48" cy="50" r="26" fill="#f6edd6"/>
+      <circle cx="60" cy="42" r="22" fill="#1b2a45"/>
+      <circle cx="40" cy="56" r="3.4" fill="#e3d7b4" opacity="0.7"/>
+      <circle cx="45" cy="64" r="2.2" fill="#e3d7b4" opacity="0.6"/>
+      <circle cx="36" cy="44" r="1.8" fill="#e3d7b4" opacity="0.5"/>
+    </svg>
     <div class="cloud c1"></div>
     <div class="cloud c2"></div>
     <div class="cloud c3"></div>
@@ -40,7 +47,7 @@
 
   <main id="app">
     <header>
-      <h1>Hydra</h1>
+      <h1>Hydra <span id="garden-count" hidden></span></h1>
       <button id="settings-btn" aria-label="Settings">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"/>
@@ -113,6 +120,8 @@
           </g>
           <g id="droplet" opacity="0">
             <path d="M100 40 C92 55 84 66 84 76 a16 16 0 0 0 32 0 C116 66 108 55 100 40 Z" fill="#63c7f2"/>
+            <path class="mini-drop d2" d="M78 52 C74 60 70 66 70 71 a8 8 0 0 0 16 0 C86 66 82 60 78 52 Z" fill="#8fd8f7"/>
+            <path class="mini-drop d3" d="M124 48 C120 56 116 62 116 67 a8 8 0 0 0 16 0 C132 62 128 56 124 48 Z" fill="#8fd8f7"/>
           </g>
           <g id="plant-body" transform-origin="100 190">
             <g id="plant-inner"></g>
@@ -134,12 +143,28 @@
     </section>
 
     <section id="action-bar">
-      <button id="drink-btn">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-          <path d="M12 2 C9.5 6 7 9.2 7 12.5 a5 5 0 0 0 10 0 C17 9.2 14.5 6 12 2 Z"/>
+      <div id="drink-wrap">
+        <svg id="drink-ring" viewBox="0 0 120 120" aria-hidden="true">
+          <defs>
+            <linearGradient id="ring-gradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#7fc8a9"/>
+              <stop offset="1" stop-color="#4f9d77"/>
+            </linearGradient>
+            <linearGradient id="ring-gradient-full" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffd166"/>
+              <stop offset="1" stop-color="#ff9e6d"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="60" cy="60" r="52"/>
+          <circle id="ring-fill" cx="60" cy="60" r="52"/>
         </svg>
-        <span>I drank a glass</span>
-      </button>
+        <button id="drink-btn" aria-label="I drank a glass">
+          <svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor">
+            <path d="M12 2 C9.5 6 7 9.2 7 12.5 a5 5 0 0 0 10 0 C17 9.2 14.5 6 12 2 Z"/>
+          </svg>
+        </button>
+      </div>
+      <p id="ring-label">I drank a glass</p>
     </section>
   </main>
 

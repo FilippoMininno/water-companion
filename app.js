@@ -42,6 +42,8 @@ const els = {
   garden: $("#garden"),
   stars: $("#stars"),
   toast: $("#toast"),
+  ringFill: $("#ring-fill"),
+  gardenCount: $("#garden-count"),
 };
 
 /* ---------- state ---------- */
@@ -171,6 +173,12 @@ function renderProgress() {
   els.lastGlass.textContent = last
     ? `Last glass at ${new Date(last.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
     : "No glass logged yet today";
+
+  const ringC = 2 * Math.PI * 52;
+  if (els.ringFill) {
+    els.ringFill.style.strokeDashoffset = (ringC * (1 - pct / 100)).toFixed(1);
+    els.ringFill.classList.toggle("full", pct >= 100);
+  }
 }
 
 /* ---------- garden (bloomed plants history) ---------- */
@@ -218,6 +226,11 @@ function renderGarden() {
     wrap.innerHTML = Plants.svgFor(e.species, Math.round(GARDEN_PLANT_SIZE * (e.scale || 1)));
     els.garden.appendChild(wrap);
   }
+  if (els.gardenCount) {
+    const bloomed = entries.length;
+    els.gardenCount.hidden = bloomed === 0;
+    els.gardenCount.textContent = "🌼 " + bloomed;
+  }
 }
 
 /* ---------- ambient grass field ---------- */
@@ -234,6 +247,23 @@ function renderGrass() {
     el.style.animationDelay = -Math.random() * 4 + "s";
     el.innerHTML = Plants.grassTuft(i);
     grass.appendChild(el);
+  }
+}
+
+/* ---------- petal rain on bloom ---------- */
+function spawnPetals(color) {
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement("div");
+    p.className = "petal-bit";
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.setProperty("--dur", 4 + Math.random() * 3.5 + "s");
+    p.style.setProperty("--sway", (Math.random() * 90 - 45).toFixed(0) + "px");
+    p.style.animationDelay = Math.random() * 0.8 + "s";
+    p.innerHTML =
+      '<svg viewBox="0 0 20 14" width="16" aria-hidden="true">' +
+      '<ellipse cx="10" cy="7" rx="9" ry="6" fill="' + color + '" opacity="0.9"/></svg>';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 9000);
   }
 }
 
@@ -391,11 +421,10 @@ function drinkGlass() {
 
 function animateDroplet() {
   const d = els.droplet;
-  d.style.opacity = "1";
-  d.style.animation = "none";
+  d.classList.remove("pouring");
   void d.offsetWidth;
-  d.style.animation = "";
-  setTimeout(() => (d.style.opacity = "0"), 950);
+  d.classList.add("pouring");
+  setTimeout(() => d.classList.remove("pouring"), 1200);
 }
 
 function triggerGrowthAnimation() {
@@ -420,6 +449,7 @@ function bloom() {
   toast("Congratulations! Your plant bloomed today 🌸");
   const rect = els.plant.getBoundingClientRect();
   spawnBurst(rect.left + rect.width / 2, rect.top + rect.height * 0.3, Plants.speciesFor(speciesId).color);
+  spawnPetals(Plants.speciesFor(speciesId).color);
   if (settings.notifications && Notification.permission === "granted") {
     try {
       new Notification("Hydra", { body: "Your plant bloomed! Beautiful job staying hydrated today 🌸" });
@@ -511,6 +541,11 @@ function closeSettings() {
   toast("Settings saved ✓");
 }
 
+/* ---------- time-of-day theme ---------- */
+function applyTheme() {
+  document.body.className = "theme-" + Growth.skyTheme(new Date().getHours());
+}
+
 /* ---------- day rollover ---------- */
 function potNewSeed() {
   speciesId = Plants.randomSpecies();
@@ -545,6 +580,7 @@ function checkNewDay() {
 function init() {
   loadState();
   if (!speciesId) speciesId = Plants.randomSpecies();
+  applyTheme();
   renderStars();
   renderGrass();
   renderGarden();
@@ -576,6 +612,7 @@ function init() {
   scheduleStatusCheck();
   setInterval(checkNewDay, 60 * 1000);
   setInterval(checkHealth, 5 * 60 * 1000);
+  setInterval(applyTheme, 10 * 60 * 1000);
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
       checkNewDay();

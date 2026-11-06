@@ -30,9 +30,10 @@
         '<path class="vein" d="M103 118 C114 112 126 104 136 94" stroke="#468a4b" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M99 172 C86 168 78 160 76 148 C90 146 99 156 99 172 Z" fill="#4f9d55"/>' +
         '<g class="bloom-part" style="--bloom-origin:100px 44px">' +
+          '<radialGradient id="grad-rose" cx="0.4" cy="0.35" r="0.9"><stop offset="0" stop-color="#ff9d9d"/><stop offset="1" stop-color="#d0404a"/></radialGradient>' +
           '<path d="M100 64 C90 58 86 48 90 38 L100 46 L110 38 C114 48 110 58 100 64 Z" fill="#3e7d46"/>' +
-          '<circle cx="100" cy="44" r="20" fill="#c73e42"/>' +
-          '<path d="M84 40 C84 26 94 16 106 18 C118 20 122 34 116 46 C110 56 94 58 88 50 C84 46 82 44 84 40 Z" fill="#ef6b70"/>' +
+          '<circle cx="100" cy="44" r="20" fill="url(#grad-rose)"/>' +
+          '<path d="M84 40 C84 26 94 16 106 18 C118 20 122 34 116 46 C110 56 94 58 88 50 C84 46 82 44 84 40 Z" fill="url(#grad-rose)"/>' +
           '<path d="M92 30 C96 24 104 24 108 30 C112 36 108 44 100 44 C92 44 88 36 92 30 Z" fill="#ff9296"/>' +
           '<path d="M96 26 C99 22 103 22 106 26 C104 31 102 34 100 34 C98 34 96 31 96 26 Z" fill="#ffb3b6"/>' +
           '<circle cx="100" cy="41" r="5" fill="#b2353c"/>' +
@@ -50,7 +51,8 @@
         '<path class="leaf" d="M100 176 C118 172 132 156 136 130 C116 132 102 148 100 176 Z" fill="#63b350"/>' +
         '<path class="vein" d="M103 172 C114 164 124 152 130 138" stroke="#4c8f3a" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<g class="bloom-part" style="--bloom-origin:100px 50px">' +
-          '<path d="M78 60 C78 40 84 24 100 22 C116 24 122 40 122 60 C118 70 108 74 100 74 C92 74 82 70 78 60 Z" fill="#ff8f42"/>' +
+          '<linearGradient id="grad-tulip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc27d"/><stop offset="1" stop-color="#f07018"/></linearGradient>' +
+          '<path d="M78 60 C78 40 84 24 100 22 C116 24 122 40 122 60 C118 70 108 74 100 74 C92 74 82 70 78 60 Z" fill="url(#grad-tulip)"/>' +
           '<path d="M84 58 C84 42 88 30 100 28 C112 30 116 42 116 58 C112 64 106 66 100 66 C94 66 88 64 84 58 Z" fill="#ffab6b"/>' +
           '<path d="M92 32 C96 28 104 28 108 32 C106 38 104 42 100 42 C96 42 94 38 92 32 Z" fill="#ff7a2f"/>' +
           '<path d="M86 56 C90 62 96 66 100 66 C104 66 110 62 114 56 L114 60 C110 68 104 72 100 72 C96 72 90 68 86 60 Z" fill="#e56f24"/>' +
@@ -69,7 +71,8 @@
         '<path class="vein" d="M103 126 C118 120 134 108 144 96" stroke="#4c8f3a" stroke-width="2" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M100 172 C84 168 76 158 74 146 C90 144 99 156 100 172 Z" fill="#57a344"/>' +
         '<g class="bloom-part" style="--bloom-origin:100px 62px">' +
-          petalRing(100, 62, 14, 6, 24, "#ffc247") +
+          '<radialGradient id="grad-sunflower" cx="0.5" cy="0.5" r="0.8"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#ff9e2c"/></radialGradient>' +
+          petalRing(100, 62, 14, 6, 24, "url(#grad-sunflower)") +
           petalRing(100, 62, 14, 4, 18, "#ffd76e") +
           '<circle cx="100" cy="62" r="14" fill="#6b4423"/>' +
           '<circle cx="94" cy="58" r="2" fill="#8a5a30"/><circle cx="104" cy="57" r="2" fill="#8a5a30"/>' +
@@ -89,7 +92,8 @@
         '<path class="leaf" d="M100 132 C114 128 122 118 124 106 C110 106 101 116 100 132 Z" fill="#86c46e"/>' +
         '<path class="vein" d="M102 128 C109 122 115 116 119 110" stroke="#5b9440" stroke-width="1.2" fill="none" stroke-linecap="round"/>' +
         '<path class="bloom-part" style="--bloom-origin:100px 52px">' +
-          petalRing(100, 52, 12, 4, 19, "#ffffff", ' stroke="#e8eef2" stroke-width="0.6"') +
+          '<radialGradient id="grad-daisy" cx="0.5" cy="0.5" r="0.8"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e8e4f0"/></radialGradient>' +
+          petalRing(100, 52, 12, 4, 19, "url(#grad-daisy)", ' stroke="#e8eef2" stroke-width="0.6"') +
           '<circle cx="100" cy="52" r="9" fill="#ffd166"/>' +
           '<circle cx="97" cy="49" r="1.8" fill="#eab53e"/><circle cx="103" cy="54" r="1.8" fill="#eab53e"/>' +
           '<circle cx="98" cy="55" r="1.4" fill="#eab53e"/>' +
@@ -109,7 +113,8 @@
         '<path class="leaf" d="M100 136 C118 134 130 124 134 108 C116 104 102 114 100 136 Z" fill="#69b173"/>' +
         '<path class="vein" d="M103 132 C114 126 124 118 128 112" stroke="#4f8f57" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<g class="bloom-part" style="--bloom-origin:100px 60px">' +
-          '<path d="M88 46 C88 60 94 70 100 70 C106 70 112 60 112 46 C104 50 96 50 88 46 Z" fill="#8b7cf8"/>' +
+          '<linearGradient id="grad-bell" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a7ff"/><stop offset="1" stop-color="#6d5ce7"/></linearGradient>' +
+          '<path d="M88 46 C88 60 94 70 100 70 C106 70 112 60 112 46 C104 50 96 50 88 46 Z" fill="url(#grad-bell)"/>' +
           '<path d="M90 46 C92 58 96 66 100 66 C102 62 104 52 104 46 C99 49 95 49 90 46 Z" fill="#a79af9"/>' +
           '<path d="M96 68 L100 76 L104 68 Z" fill="#6d5ce7"/>' +
           '<path d="M70 86 C70 96 75 103 80 103 C85 103 90 96 90 86 C83 89 77 89 70 86 Z" fill="#7b6cf6" transform="rotate(24 80 95)"/>' +
@@ -129,10 +134,11 @@
         '<path class="vein" d="M103 124 C113 119 122 114 128 108" stroke="#5c8a5f" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
         '<path class="leaf" d="M99 172 C88 168 82 160 82 150 C94 150 99 160 99 172 Z" fill="#6da070"/>' +
         '<g class="bloom-part" style="--bloom-origin:100px 48px">' +
-          '<circle cx="86" cy="46" r="17" fill="#ff5f5f"/>' +
-          '<circle cx="114" cy="46" r="17" fill="#ff5f5f"/>' +
-          '<circle cx="100" cy="32" r="17" fill="#ff7575"/>' +
-          '<circle cx="100" cy="60" r="17" fill="#ff7575"/>' +
+          '<radialGradient id="grad-poppy" cx="0.4" cy="0.35" r="0.9"><stop offset="0" stop-color="#ff9d8f"/><stop offset="1" stop-color="#ee4444"/></radialGradient>' +
+          '<circle cx="86" cy="46" r="17" fill="url(#grad-poppy)"/>' +
+          '<circle cx="114" cy="46" r="17" fill="url(#grad-poppy)"/>' +
+          '<circle cx="100" cy="32" r="17" fill="url(#grad-poppy)"/>' +
+          '<circle cx="100" cy="60" r="17" fill="url(#grad-poppy)"/>' +
           '<circle cx="88" cy="42" r="12" fill="#ff8f8f" opacity="0.55"/>' +
           '<circle cx="100" cy="48" r="9" fill="#2b2b2b"/>' +
           '<circle cx="96" cy="44" r="1.6" fill="#4d4d3d"/><circle cx="104" cy="45" r="1.6" fill="#4d4d3d"/>' +

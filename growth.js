@@ -99,6 +99,15 @@
     return "content";
   }
 
+  /* Time-of-day sky theme for a given hour (0-23). */
+  function skyTheme(hour) {
+    var h = typeof hour === "number" && hour >= 0 && hour <= 23 ? hour : 12;
+    if (h >= 5 && h < 10) return "morning";
+    if (h >= 10 && h < 17) return "day";
+    if (h >= 17 && h < 20) return "sunset";
+    return "night";
+  }
+
   var api = {
     STAGES: STAGES,
     STAGE_SCALES: STAGE_SCALES,
@@ -112,6 +121,7 @@
     needsRollover: needsRollover,
     shouldPlantOnRollover: shouldPlantOnRollover,
     potMood: potMood,
+    skyTheme: skyTheme,
   };
 
   if (typeof module !== "undefined" && module.exports) {

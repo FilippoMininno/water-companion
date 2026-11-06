@@ -187,3 +187,24 @@ test("potMood maps every plant status to a face mood", () => {
   assert.strictEqual(Growth.potMood("sick"), "sad");
   assert.strictEqual(Growth.potMood("dead"), "dead");
 });
+
+/* ---------- time-of-day sky theme ---------- */
+
+test("skyTheme maps hours to morning/day/sunset/night", () => {
+  assert.strictEqual(Growth.skyTheme(5), "morning");
+  assert.strictEqual(Growth.skyTheme(9), "morning");
+  assert.strictEqual(Growth.skyTheme(10), "day");
+  assert.strictEqual(Growth.skyTheme(16), "day");
+  assert.strictEqual(Growth.skyTheme(17), "sunset");
+  assert.strictEqual(Growth.skyTheme(19), "sunset");
+  assert.strictEqual(Growth.skyTheme(20), "night");
+  assert.strictEqual(Growth.skyTheme(23), "night");
+  assert.strictEqual(Growth.skyTheme(0), "night");
+  assert.strictEqual(Growth.skyTheme(4), "night");
+});
+
+test("skyTheme falls back to midday for invalid hours", () => {
+  assert.strictEqual(Growth.skyTheme(-3), "day");
+  assert.strictEqual(Growth.skyTheme(30), "day");
+  assert.strictEqual(Growth.skyTheme(NaN), "day");
+});
